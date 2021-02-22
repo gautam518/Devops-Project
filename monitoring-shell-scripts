@@ -1,3 +1,4 @@
+#Maintained by Me
 tecreset=$(tput sgr0)
 
 # Check if connected to Internet or not
