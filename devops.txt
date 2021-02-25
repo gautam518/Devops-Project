@@ -1,0 +1,552 @@
+Jenkins.
+what happen if build has been failed.
+Once the build has faild .Its getting email alert to our developers.We are using plugin called mailer.
+Configure that in post build.Once build has been failed mails goes to developers.They mitigate that one.
+
+How to rollback once build has been failed.
+Once build has been failed we are deploying previous version of war file from jfrog artifactory.
+
+Git.
+1-What is git
+git is a distributed version control system.It lets to a track changes made to a file and allow you to revert back.
+There is a central cloud repository where developer can commit changes and share them with other teammates.
+When there is a server outage you can recover with one of your teammates local repository.
+
+2-What is the function of git config?
+Git uses your usrename to associate commits with an identity.The git config command can be used to change your git
+configuration,including your username.
+git config --global user.name "yourname"            This command will add username
+git config --global user.email "your emailid"       This command will add emailid
+
+To check username and email
+git config --global user.name
+git config --global user.email
+
+3-How can you create a repository in git?
+git init
+
+4-few commands
+touch index.html                                         Working area.Untracked files
+stage1-git add .                                         It goes in staging area,now ready to committed
+stage2-git status         
+stage3-git commit -m "initial messages"                  On branch master,nothing to commit to local repo
+stage4-git push -u master                                
+ 
+
+5-Suppose if any person changes in file and we don't know where code has been changes .You want to reverse then run below commands.It run before commited
+git checkout contact.html                                It reverese to last stages.Means one stage before.Means recover the file
+git checkout -f                                          It reverese all file with single command.If you change in multiple files then
+                                                         this command works
+git log                                                  It show logs what files has been commited.
+git log -n -1                                            It shows logs of last commits
+
+6-git diff                                               It compare working directory to staging area
+  git diff --staged                                      It compare staging area to last commit
+  git checkout -f                                        if we want to  do same as last commit to working directory
+
+7-git commit -a -m "message"                             if directly jump from working area to commit
+
+8-If you added any new file and it goes in staging area and you want to reverse in working area then run below commands
+git rm --cached waste.html
+It goes to tracked to untracked file
+
+9-What is gitignore
+If you don't want to add any files in git then add it in gitignore files like logs,photograph etc etc
+touch .gitignore
+add filename in this
+abc.log   -It ignore from anywhere from server with name abc.log
+/abc.log  -It ignore abc.log only where .gitignore is present
+*.log     -ignore with .log extensions
+
+10.What is git branch?
+git branch feature1    ----> To create new branch
+git checkout feature1  ----> To switch is feature1 branch
+git checkout master    ----->To switch in master branch
+git merge feature1     ----->To merge feature1 in master
+git checkout -b feature1 ---->To create and switch in feature1
+ 
+
+11.Github
+how to add ur github repository with local repository
+git remote add origin https://github.com/codinginone/abc.git
+git remote
+git remote -v
+git push origin master                      It add ur master in origin
+git push -u origin master                   It push ur code in remotre repository
+
+12To clone
+git clone https://yrl/abc.git 
+
+Kubernetes:
+1-What is kubernetes?
+Kubernetes is an open source system for automatic deploymnet,scaling and managemnet of containerized applications.
+
+2-What is docker?
+It is a container.Its main benifit is to packaging application in containers.
+
+3-What is the different architecture of kubernetes?
+Master: Kubeshedular,replicaset or repelicacontroller,apiserver, etcd
+Worker: Kubelet,kubeproxy
+
+Kubeshedular: It is responsible for allocating pods in avaialble nods.It is responsible for workload utilizations.
+replication controller:It make sure that the number of pods always exist.
+apiserver-All the operations in kubernetes are done using kubeapi.
+etcd:It stores the configuration information which can be used by each of the nodes in cluster.
+
+kubelet:It is responsible for managing pods and containers.It also check either pod is running healthy or not.
+kubeproxy:It maintains network rules on nodes.
+
+4-How to deploy httpd using manifest file
+vi abc.yml
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: my-apache-deployment
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: my-apache
+    spec:
+      containers:
+      - name: my-apache-container1
+        image: httpd
+        ports:
+        - containerPort: 80
+
+kubectl apply -f abc.yml
+
+Now create services.
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-apache-service
+spec:
+  selector:
+    app: my-apache
+  type: LoadBalancer
+  ports:
+    - name: my-apache-port
+      port: 8080
+      targetPort: 80
+
+5 kubernetes volumes?
+To store data we used volumes
+kubernetes volumes types
+-->Local node types:emptyDir,hostpath,local
+-->File sharing types: nfs
+-->Srorage types: fc,iscsi
+-->Special Purpose types:secret,git repo
+-->cloud provider types-vsphere,Cinder,awsElasticBlockStore,azuredisk,
+                         gcepersistentDisk
+-->Distributed filesystem types- glusterfs,cephfs
+-->Special type- PersistentVolume ,persistent volumeclaim
+
+-->Local node types:
+   emptyDir:Empty dir works only when pods is running once pod deleted data get lost.Not recomended
+   hostpath:This type of volume mounts a file or directory from node filesystem into pod.
+
+   Scenario1:In this scenario single volume assigned to first container.Here path /mnt/data in worker1node and /var/nginx path inside container.
+   apiVersion: apps/v1beta1
+   metadata:
+   	name:ebay-app 
+   spec:
+     selector:
+       matchlabels:
+           environment:dev
+	   app: ebay 	
+
+   replicas: 1
+   template:
+     metadata:
+      	labels:
+            environment: dev
+            app: my-apache
+    spec:
+        volumes:
+           name: volume
+           hostpath:
+             path:/mnt/data
+    containers:
+      - name: container-1-nginx
+        image: nginx
+        volumeMounts:
+              name:volume
+              mountPath: "/var/nginx-data"
+      - name: container2-tomcat
+        image:tomcat
+
+   Scenario2:In this scenario single volume assigned to both container.When u created data in 1st container automatically 
+             it creates in another containers.Here path /mnt/data in worker1node and /var/nginx  and /var/tomcat are path inside container.
+
+   apiVersion: apps/v1beta1
+   metadata:
+   	name:ebay-app 
+   spec:
+     selector:
+       matchlabels:
+           environment:dev
+	   app: ebay 	
+
+   replicas: 1
+   template:
+     metadata:
+      	labels:
+            environment: dev
+            app: my-apache
+    spec:
+        volumes:
+           name: volume
+           hostpath:
+             path:/mnt/data
+    containers:
+      - name: container-1-nginx
+        image: nginx
+        volumeMounts:
+              name:volume
+              mountPath: "/var/nginx-data"
+      - name: container2-tomcat
+        image:tomcat
+              name:volume
+              mountPath: "/var/tomcat"
+
+   Scenario3:In this scenario dedicated volume assigned to different container.Means volume1 for 1st and volume2 for 2nd containers.
+    
+
+   apiVersion: apps/v1beta1
+   metadata:
+   	name:ebay-app 
+   spec:
+     selector:
+       matchlabels:
+           environment:dev
+	   app: ebay 	
+
+   replicas: 1
+   template:
+     metadata:
+      	labels:
+            environment: dev
+            app: my-apache
+    spec:
+        volumes:
+           name: volume1
+           hostpath:
+             path:/mnt/data
+           name: volume2
+           hostpath:
+             path:/mnt/data1
+           
+    containers:
+      - name: container-1-nginx
+        image: nginx
+        volumeMounts:
+              name:volume1
+              mountPath: "/var/nginx-data"
+      - name: container2-tomcat
+        image:tomcat
+              name:volume2
+              mountPath: "/var/tomcat"
+Note: In all the above scenario fitted only when u use single workernode.In these scenarios data in first cannot copy data in 2nd worker.
+      So for all those conditions you have to go through other types like nfs or iscsi
+   scenario4:Here first you have shared nfs volume to both workernode
+
+    apiVersion: apps/v1beta1
+   metadata:
+   	name:ebay-app 
+   spec:
+     selector:
+       matchlabels:
+           environment:dev
+	   app: ebay 	
+
+   replicas: 2
+   template:
+     metadata:
+      	labels:
+            environment: dev
+            app: my-apache
+    spec:
+        volumes:
+           name: volume
+           hostpath:
+             path:/mnt/data
+    containers:
+      - name: container-1-nginx
+        image: nginx
+        volumeMounts:
+              name:volume
+              mountPath: "/var/nginx-data"
+      - name: container2-tomcat
+        image:tomcat
+              name:volume
+              mountPath: "/var/tomcat"
+
+
+-->Special type- 
+  PersistentVolume: It is a piece of storage that administartor has provisioned.
+  persistent volumeclaim: It is request for storage to administrator
+
+How it works:
+NFS:10GB
+FS:50GB
+ISCSI:20GB
+AWS EBS:100GB
+OPENSTACK CINDER:100GB
+
+There are 3 steps.First we need to create PV then PVC then define these in deployment file.
+                  Here I am using NFS server for storage
+1st: First create PV
+
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+   name: ebay-pv
+spec:
+   capacity:
+     storage:20Gi
+   volumeMode: Filesystem
+   accessModes:
+     - ReadWriteOnce
+   PersistentVolumeReclaimPolicy:Recycle    ----->Three option(Recycle,written.deleted)
+   StorageClassName: ebaystorage
+   mountOptions:
+      - nfsvers=4.1
+   nfs:
+     path: /nfsdata
+     server:192.168.1.7 
+
+kubectl get pv
+
+2nd:Now create pvc
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+   name: myclaim
+spec:
+   StorageClassName: ebaystorage
+   accessModes:
+     - ReadWriteOnce
+   resources:
+      requests:
+         storage: 20G
+
+step3:Now define these pvc in deployments
+
+apiVersion: apps/v1beta1
+   metadata:
+   	name:ebay-app 
+   spec:
+     selector:
+       matchlabels:
+           environment:dev
+	   app: ebay 	
+
+   replicas: 1
+   template:
+     metadata:
+      	labels:
+            environment: dev
+            app: e-bay
+    spec:
+        volumes:
+         - name: ebay-volume 
+           persistentVolumeClaim:
+             claimName: myclaim
+    
+     containers:
+      - name: container-1-nginx
+        image: nginx
+        volumeMounts:
+              name:ebay-volume
+              mountPath: "/tmp/persistent"
+      - name: container2-tomcat
+        image:tomcat
+
+#Type of services:
+1-clutserip :Internally communicate
+2-Nodeport: communicating externally outside world
+3-Loadbalancer
+4-Ingress
+
+1-clutserip
+first of all create deployment manifest file dep.yml
+
+apiVersion: apps/v1beta1
+   metadata:
+   	name:app1 
+   spec:
+     selector:
+       matchlabels:
+           environment:dev
+	   app: app1
+ 	
+   replicas: 1
+   template:
+     metadata:
+      	labels:
+            environment: dev
+            app: my-apache
+    spec:
+      containers:
+       - name: container-1-nginx
+         image: nginx
+
+now create manifest for service type cluter ip
+   apiVersion: apps/v1beta1
+   metadata:
+   	name:app1-svc 
+   spec:
+     selector:
+           environment:dev
+	   app: app1
+     type:ClusterIP  <-----------In node port change to NodePort
+     ports:
+       - port: 8080
+         targetPort 80
+
+In Nodeport just change type to NodePort
+
+Q-What is kubernetes ingress?
+It is used when you want to expose your services, which are running in Kubernetes Cluster, to external networks 
+which can be internet or anything outside your Kubernetes cluster.It is a single resource which help in 
+expose application to outside world,load balancing, and named based virtual hosting etc etc
+
+Q-What is ingress controller.
+With the help of this you can manage services
+steps:We are creating rules using nginx.Go to below link
+-->https://github.com/kubernetes/ingress-nginx/
+
+then go to below section and download ingress controller
+-->git clone https://github.com/kubernetes/ingress-nginx/blob/master/deploy/static/provider/aws/
+-->kubectl apply -f deploy.yml
+-->kubectl get ns
+-->kubectl -n ingress-nginx get pod -o wide--->    Here ingress-nginx is the name of name space.
+-->kubectl get ingess-nginx get svc-->             Here you get an external ip details.
+-->kubectl get svc  
+
+Now create some rule
+vim ingress.yaml
+
+apiVersion: apps/v1beta1
+kind: Ingress
+   metadata:
+   	name:demo-ingress
+        annotations
+            kuberenetes.io/ingress.class: "nginx" 
+   spec:
+     rules:
+     - host: knot111.learningguide.com
+       http:
+         paths:
+           - path: /
+             backend
+                serviceNmae: knot
+                servicePort: 80
+      - host: knot222.learningguide.com
+        http:
+          paths:
+           - path: /
+             backend
+                serviceNmae: knot
+                servicePort: 80
+
+kubectl apply -f ingress.yml
+-->Kubectl get ing
+hostname: knot111.learningguide.com,knot222.learningguide.com
+You can open with both url in browser
+
+Q-What is namespace?
+Namespace is a virtual cluster that sits on the top of same physical cluster.When we creating any pod by default it goes in default namespaces.
+below is the commands which tells which resource is supporting namespace or not.
+-->kubectl api-resources --->if true then it support false not support
+-->kubectl create namespace test --->To create test namespace.
+-->kubectl apply -f pod.yml --namespace test  ->It create pod in test namespace
+-->kubectl get pods -n test -->show podsoutput in test namespace
+
+apiVersion: v1
+kind: Pod
+metadata:
+   name: pod4
+   namespace: test
+   labels:
+     app: myapp1
+     type: frontend
+spec:
+   containers:
+     - name: myapp-container
+       image: nginx
+       imagePullPolicy: Never
+       resources:
+          requests:
+             memory: 1Mi
+          limits:  
+             memory: 200Mi
+     
+Q-What is autoscaling?
+It is a feature in which the cluster is capable of increasing the number of nodes as the demand for service response 
+increases and decrease the number of nodes as the requirement decreases.
+
+There are 3 kinds of autiscaling
+1-Vertical Pod Autoscaling (VPA)
+2-Horizontal Pod Autoscaling (HPA)
+3-Cluster Autoscaling (CA)
+
+1-Vertical Pod Autoscaling (VPA)
+The VPA is only concerned with increasing the resources available to a pod that resides on a node by giving you control by 
+automatically adding or reducing CPU and memory to a pod.
+
+2-Horizontal Pod Autoscaling (HPA)
+HPA can change the number of replicas of a pod, scale pods to add or remove pod container collections as needed.
+
+3-Cluster Autoscaling (CA)
+CA automatically adds or removes nodes from a cluster node pool in order to meet demand and save money.
+It scales up or down the number of nodes inside your cluster. CA scales your cluster nodes based on pending pods.
+
+2-Horizontal Pod Autoscaling (HPA)
+steps:First create a deployment using a yaml file named nginx.yaml
+
+apiVersion: v1
+kind: Deployment
+metadata:
+  name: nginx
+  namespace: default
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+    app: nginx
+  template
+   metadata:
+     labels:
+        app: nginx
+  spec:
+     containers:
+     - name: nginx
+       name: nginx:1.7.9
+      ports:
+       - containerPort: 80
+       resources:
+          requests:
+           cpu: "250m"
+kubectl apply -f nginx.yaml
+
+step2: create an HPA file like below
+vi nginx-hpa.yaml
+ apiVersion: autoscaling/v1
+ kind: HorizontalPodAutoscaler
+ metadata:
+   name: nginx
+ spec:
+   scaleTragetRef:
+      apiVersion: app/v1
+      kind: Deployment
+      name: nginx
+  minReplicas: 1
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 50
+
+kubectl apply -f nginx-hpa.yaml
+kubectl get hpa -->show ths status
