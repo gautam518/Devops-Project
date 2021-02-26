@@ -550,3 +550,74 @@ vi nginx-hpa.yaml
 
 kubectl apply -f nginx-hpa.yaml
 kubectl get hpa -->show ths status
+
+Q-How to do rolling update in deployment
+apiVersion: v1
+kind: Deployment
+metadata: 
+  name: webserver
+  minReadySecond: 10
+  progressDeadlineSeconds: 300
+  revisionHistoryLimit: 3
+  replicas: 3
+  selector:
+    matchLabels:
+    app: nginxweb
+  strategy:
+   rolling update:
+      maxSurge: 1
+      maxUnavaialble:1
+   type:RollingUpdate
+   template: 
+     metadata:
+      labels:
+      app: nginxweb
+      type: production
+      ver: v1                      <-----------------change v2
+   spec:
+     containers:
+     - image: alpine:v1            <-----------------change to apline:v2
+       name: web
+      ports:
+       - containerPort: 80
+         Protocol: TCP
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 80
+      initialDelaySeconds: 10
+      timeoutSeconds: 10
+      periodSeconds:5
+      sucessThreshold: 1
+      failureThreshhold: 2
+     restartPolicyalways: Always
+
+In rolling update v1 to v2 update only in 2 places.
+
+
+Note :Before that create a service type load balancer
+vi rollingupdate-service.yaml
+apiVersion: v1
+kind: Service
+metadata: 
+  name: web-ru
+spec:
+  selector:
+     app:nginxweb
+  ports:
+   - protocol: TCP
+     port: 80
+  type:LoadBalacer
+ 
+Note: here after applying you will get 3 clutser ip and one external ip.You can go tp browser and type external ip
+
+-->kubectl rollout history deployment webserver  --> To check history
+-->kubectl rollout status deployment webserevr   -->To know the status it is showing v1
+-->kubectl rollout undo deployment/webserver     -->Now move to v2
+-->kubectl rollout undo deployment/webserver --to-revision=1
+-->kubectl get all -->To show status
+Steps to delete all
+1-kubectl delete svc/web-ru  -->Delete the service
+2-kubectl delete deploy/webserver  -->To delete deployment webserver 
+ Drawback of rollback: For few seconds it will show both version
+
