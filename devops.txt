@@ -620,4 +620,251 @@ Steps to delete all
 1-kubectl delete svc/web-ru  -->Delete the service
 2-kubectl delete deploy/webserver  -->To delete deployment webserver 
  Drawback of rollback: For few seconds it will show both version
+ 
+ Whole project 
+1-First create docker file
+# Create Custom Docker Image
+# Pull tomcat latest image from dockerhub 
+FROM tomcat:latest
+
+# Maintainer
+MAINTAINER "PR Reddy - iwayQ" 
+
+# copy war file on to container 
+COPY ./iwayq.war /usr/local/tomcat/webapps
+
+2-Create playbook
+vi create-container-image.yaml
+#Create Custom Container Image
+#Push to DockerHub Registry
+---
+- hosts: localhost
+  tasks: 
+  - name: Pull .war artifact from Artifactory
+    become: true
+    get_url:
+      url: http://13.212.194.210:8082/artifactory/libs-release/com/iwayq/iwayQApp/1.0-RELEASE/iwayQApp-1.0-RELEASE.war
+      dest: /home/ec2-user
+      url_username: admin
+      url_password: Admin123
+
+  - name: Rename .war Artifact
+    command: mv iwayQApp-1.0-RELEASE.war iwayq.war
+  
+  - name: Pull Tomcat  Container Image
+    docker_image:
+      name: tomcat:latest
+      source: pull
+
+  - name: Build image and with build args
+    docker_image:
+      name: iwayq
+      build:
+        path: /home/ec2-user
+        pull: no
+        args:
+          listen_port: 8080
+      source: build
+
+  - name: Log into DockerHub
+    docker_login:
+     username: iwayqdockertest
+     password: P2$$w0rd
+
+    
+  - name: Push to docker hub
+    docker_image:
+      name: iwayq
+      repository: iwayqdockertest/iwayq:1.0
+      push: yes
+      source: local
+
+3-Create deployment in kubernetes
+vi create-k8s-deployment.yaml
+
+#Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: iwayq-deploy
+  labels:
+    app: iwayq-app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: iwayq-app
+  template:
+    metadata:
+      labels:
+        app: iwayq-app
+    spec:
+      containers:
+      - name: iwayq-container
+        image: iwayqdockertest/iwayq:1.0
+        ports:
+        - containerPort: 8080
+
+4-Create services
+vi nodePort.yml
+#Service Type nodePort
+apiVersion: v1
+kind: Service
+metadata:
+  name: iwayq-service
+  labels:
+    app: iwayq-app
+spec:
+  selector:
+    app: iwayq-app
+
+  type: NodePort
+  ports:
+  - nodePort: 31000
+    port: 8080
+    targetPort: 8080
+
+
+5-Jenkins file
+vi jenkinsfile
+pipeline {
+  agent any
+  tools {
+  
+  maven 'maven'
+   
+  }
+    stages {
+
+      stage ('Checkout SCM'){
+        steps {
+          checkout([$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'git', url: 'https://iwayqtech@bitbucket.org/iwayqtech/devops-pipeline-project.git']]])
+        }
+      }
+	  
+	  stage ('Build')  {
+	      steps {
+          
+            dir('java-source'){
+            sh "mvn package"
+          }
+        }
+         
+      }
+   
+     stage ('SonarQube Analysis') {
+        steps {
+              withSonarQubeEnv('sonar') {
+                
+				dir('java-source'){
+                 sh 'mvn -U clean install sonar:sonar'
+                }
+				
+              }
+            }
+      }
+
+    stage ('Artifactory configuration') {
+            steps {
+                rtServer (
+                    id: "jfrog",
+                    url: "http://13.212.194.210:8082/artifactory",
+                    credentialsId: "jfrog"
+                )
+
+                rtMavenDeployer (
+                    id: "MAVEN_DEPLOYER",
+                    serverId: "jfrog",
+                    releaseRepo: "libs-release",
+                    snapshotRepo: "libs-snapshot"
+                )
+
+                rtMavenResolver (
+                    id: "MAVEN_RESOLVER",
+                    serverId: "jfrog",
+                    releaseRepo: "libs-release",
+                    snapshotRepo: "libs-snapshot"
+                )
+            }
+    }
+
+    stage ('Deploy Artifacts') {
+            steps {
+                rtMavenRun (
+                    tool: "maven", // Tool name from Jenkins configuration
+                    pom: 'java-source/pom.xml',
+                    goals: 'clean install',
+                    deployerId: "MAVEN_DEPLOYER",
+                    resolverId: "MAVEN_RESOLVER"
+                )
+         }
+    }
+
+    stage ('Publish build info') {
+            steps {
+                rtPublishBuildInfo (
+                    serverId: "jfrog"
+             )
+        }
+    }
+
+    stage('Copy Dockerfile & Playbook to Ansible Server') {
+            
+            steps {
+                  sshagent(['sshkey']) {
+                       
+                        sh "scp -o StrictHostKeyChecking=no Dockerfile ec2-user@13.212.74.45:/home/ec2-user"
+                        sh "scp -o StrictHostKeyChecking=no create-container-image.yaml ec2-user@13.212.74.45:/home/ec2-user"
+                    }
+                }
+            
+        } 
+    stage('Build Container Image') {
+            
+            steps {
+                  sshagent(['sshkey']) {
+                       
+                        sh "ssh -o StrictHostKeyChecking=no ec2-user@13.212.74.45 -C \"sudo ansible-playbook create-container-image.yaml\""
+                        
+                    }
+                }
+            
+        } 
+    stage('Copy Deployent & Service Defination to K8s Master') {
+            
+            steps {
+                  sshagent(['sshkey']) {
+                       
+                        sh "scp -o StrictHostKeyChecking=no create-k8s-deployment.yaml ec2-user@13.212.221.132:/home/ec2-user"
+                        sh "scp -o StrictHostKeyChecking=no nodePort.yaml ec2-user@13.212.221.132:/home/ec2-user"
+                    }
+                }
+            
+        } 
+
+    stage('Waiting for Approvals') {
+            
+        steps{
+
+				input('Test Completed ? Please provide  Approvals for Prod Release ?')
+			  }
+            
+    }     
+    stage('Deploy Artifacts to Production') {
+            
+            steps {
+                  sshagent(['sshkey']) {
+                       
+                        sh "ssh -o StrictHostKeyChecking=no ec2-user@13.212.221.132 -C \"sudo kubectl apply -f create-k8s-deployment.yaml\""
+                        sh "ssh -o StrictHostKeyChecking=no ec2-user@13.212.221.132 -C \"sudo kubectl apply -f nodePort.yaml\""
+                        
+                    }
+                }
+            
+        } 
+         
+   } 
+}
+
+
 
