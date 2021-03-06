@@ -868,3 +868,33 @@ pipeline {
 
 
 
+Some basic questions:
+Q-what is configmap?
+It stores non confidential data in keyvalue pair.
+ConfigMaps enable you to separate your configurations from your Pods and components, which helps keep your workloads portable.
+
+To create configmap using literals
+#kubectl create cm cm1 --from-literal=database_ip="192.168.0.4"  ----->To create configmap
+#kubectl describe cm cm1
+output like:
+database_ip
+192.168.0.4
+#create cm cm2 --from-literal=database_ip="192.168.0.4" create cm cm2 --from-literal=database_username="root" create cm cm2 --from-literal=database_password="admin"   ---->Its not a good practise to show your password in plain text
+#kubectl get data
+
+To create configmap using file
+mkdir configmap
+vi application.properties
+#database details
+database_ip="192.168.0.4"
+database_password="mypassword"
+database_username="gautam"
+
+superadmin details
+username=superadmin
+password=superadminpassword
+
+#kubectl create cm cm3 --from-file=application.properties
+
+
+
