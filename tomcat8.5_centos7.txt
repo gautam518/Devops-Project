@@ -1,0 +1,74 @@
+1-check the java version
+java -version
+
+javac -version
+
+if not then install java 1.8
+yum install java-1.8.0-openjdk.x86_64
+
+2-wget https://downloads.apache.org/tomcat/tomcat-8/v8.5.51/bin/apache-tomcat-8.5.51.tar.gz
+
+3-mkdir /opt/tomcat 
+
+4- mv apache-tomcat-8.5.51.tar.gz /opt/tomcat/
+
+5-cd /opt/tomcat/apache-tomcat-8.5.51.tar.gz
+
+6- tar -xvf apache-tomcat-8.5.51.tar.gz
+
+7- chmod 700 bin/*.sh
+
+8- ln -s /opt/tomcat/apache-tomcat-8.5.51/bin/startup.sh /usr/bin/tomcatup
+   ln -s /opt/tomcat/apache-tomcat-8.5.51/bin/shutdown.sh /usr/bin/tomcatdown   
+
+9- go to browser and check
+   http://ip:8080
+
+10- To change port number
+     vi /opt/tomcat/apache-tomcat-8.5.51/conf/server.xml
+      <Connector port="8090" protocol="HTTP/1.1"
+
+change here port 8080 to 8090
+ 
+
+-->
+<!--
+#  <role rolename="tomcat"/>
+#  <role rolename="role1"/>
+#  <user username="tomcat" password="<must-be-changed>" roles="tomcat"/>
+#  <user username="both" password="<must-be-changed>" roles="tomcat,role1"/>
+#  <user username="role1" password="<must-be-changed>" roles="role1"/>
+-->
+   <role rolename="admin-gui"/>
+   <role rolename="manager-gui"/>
+   <user username="admin" password="admin" roles="admin-gui,manager-gui"/>
+</tomcat-users>
+
+11-We save the changes. Now, we will go to the administrator’s directory and edit the context.xml file:
+vi /opt/tomcat/apache-tomcat-8.5.51/webapps/host-manager/META-INF
+comment line and 20 like this
+<Context antiResourceLocking="false" privileged="true" >
+<!--  <Valve className="org.apache.catalina.valves.RemoteAddrValve"
+         allow="127\.\d+\.\d+\.\d+|::1|0:0:0:0:0:0:0:1" />-->
+  <Manager sessionAttributeValueClassNameFilter="java\.lang\.(?:Boolean|Integer|Long|Number|String)|org\.apache\.catalina\.filters\.CsrfPreventionFilter\$LruCache(?:\$1)?|java\.util\.(?:Linked)?HashMap"/>
+</Context>
+
+12-same in manager also 
+vi /opt/tomcat/apache-tomcat-8.5.51/webapps/manager/META-INF/context.xml
+comment line 19 and 20
+
+How to deploy .war file in tomcat8
+go to browser-->managerapps-->warfileto deploy--> choosefile(hello.war)-->deploy
+after deploy it goes to /opt/tomcat/apache-tomcat-8.5.51/webapps/ directory with name hello
+
+now you can open in browser
+http://ip/hello
+
+
+Upgrade tomcat 8 to 9
+
+1-stop the current tomcat service
+2-install the new tomcat
+3- copy old tomcat /conf/Catalina/localhost/arsys.xml file from old to new one
+4-configure ports and java options
+5-update the deployer settings

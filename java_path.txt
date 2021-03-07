@@ -1,0 +1,59 @@
+Devops steps by steps
+JAVA installation
+
+1-yum install java-1.8.0-openjdk-devel
+2-sudo alternatives --config java ----select default java version and copy the path from here.
+3-echo $JAVA_HOME
+4-export JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.232.b09-0.el7_7.x86_64/jre/
+5-copy vi /etc/profile
+  export JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.232.b09-0.el7_7.x86_64/jre/
+
+Run both commnd
+java -version---->jre
+javac -version--->jdk
+
+Run first program in java
+mkdir java 
+cd java
+vi HelloWorld.java
+public class HelloWorld {
+    public static void main(String[] args) {
+        System.out.println("Hello, World");
+    }
+}
+
+save it
+#javac HelloWorld.java
+#java HelloWorld
+#Hello, World-->output like this
+
+
+#maven installation steps
+wget http://www-us.apache.org/dist/maven/maven-3/3.5.4/binaries/apache-maven-3.5.4-bin.tar.gz
+tar -xf apache-maven-3.5.4-bin.tar.gz -C /opt/
+cd /opt/
+ls
+cd apache-maven-3.5.4/
+ls
+ln -s /opt/apache-maven-3.6.0 /opt/maven
+vi /etc/profile.d/maven.sh
+export JAVA_HOME=/usr/lib/jvm/jre-openjdk
+export M2_HOME=/opt/maven
+export MAVEN_HOME=/opt/maven
+export PATH=${M2_HOME}/bin:${PATH}
+
+chmod +x /etc/profile.d/maven.sh
+source /etc/profile.d/maven.sh
+mvn -version
+echo $M2_HOME
+
+
+
+
+Jenkins installations
+1-wget -O /etc/yum.repos.d/jenkins.repo https://pkg.jenkins.io/redhat-stable/jenkins.repo
+2-rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io.key
+3-yum install jenkins
+4-service jenkins start
+5-cd /var/lib/jenkins/secrets/initialAdminPassword
+6-

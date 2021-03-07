@@ -1,0 +1,139 @@
+kubernatics installation centos 7 aws
+create 2 node with same subnet
+1-On both the master and worker nodes:
+yum install docker -y 
+systemctl enable docker && systemctl start docker
+
+cat <<EOF > /etc/yum.repos.d/kubernetes.repo
+[kubernetes]
+name=Kubernetes
+baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
+enabled=1
+gpgcheck=1
+repo_gpgcheck=0
+gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+exclude=kube*
+EOF
+
+cat <<EOF >  /etc/sysctl.d/k8s.conf
+net.bridge.bridge-nf-call-ip6tables = 1
+net.bridge.bridge-nf-call-iptables = 1
+EOF
+
+sysctl --system
+setenforce 0
+
+yum install -y kubelet kubeadm kubectl --disableexcludes=kubernetes
+systemctl enable kubelet && systemctl start kubelet
+
+2-Only on the Master Node:
+kubeadm init --ignore-preflight-errors=all
+
+mkdir -p $HOME/.kube
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+3-Only on worket node
+ kubeadm join command copies from master node>
+
+4-check in master node with below command
+  kubectl get nodes
+  kubectl get pods --all-namespaces
+
+5-Now create a pod network to the cluster with below command
+  run these command in master only
+  export kubever=$(kubectl version | base64 | tr -d '\n')
+  kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$kubever"
+
+6-Now deploy nginx container with below command
+  kubectl create deployment nginx --image=nginx
+  kubectl get deployments
+  kubectl describe deployment nginx
+  kubectl create service nodeport nginx --tcp=80:80
+  kubectl get svc
+
+7-Now check nginx in the browser with port number
+
+Deploying custom docker image in kubernetes.
+1-First off all create docker file of redis
+Steps to Deploy Docker Image to Kubernetes.
+Step1: Creating Dockerfile of nginx
+          vi Dockerfile
+        # Use existing docker image as a base
+          FROM alpine
+
+	# Download and install dependency
+          RUN apk add --update redis
+
+	# EXPOSE the port to the Host OS
+	  EXPOSE 6379
+ wq!
+
+# Tell the image what command it has to execute as it starts as a container
+CMD ["redis-server"]
+
+Step2: Build an Image from Dockerfile
+       docker build -t saravak/redis .
+Step3: Validate the image is created in docker images
+       docker images
+
+Step4: Upload to hub.docker.com
+       first tag the image
+       docker image tag saravak/redis gautam518/kube_redis_1
+       docker push gautam518/kube_redis_1
+       docker login
+
+Step5: Start the container from image
+       docker container run -d -it --name rediscontainer gautam518/kube_redis_1:latest
+
+Method1: Kubernetes Tasks with Manifest file
+         vi create-redispod.yml
+         apiVersion: v1
+	 kind: Pod
+	 metadata:
+   	    name: redis-pod
+	spec:
+   	   containers:
+  	  - name: redis-container01
+            image: saravak/redis:latest
+            ports:
+     	  - containerPort: 6379
+Step6: Create Manifest file for Kubernetes
+Method1: Kubernetes Tasks with Manifest file
+         vi create-redispod.yml
+         apiVersion: v1
+	 kind: Pod
+	 metadata:
+   	    name: redis-pod
+	spec:
+   	   containers:
+  	  - name: redis-container01
+            image: gautam518/kube_redis_1:latest
+            ports:
+     	  - containerPort: 6379
+
+Step7: Build and Create POD from Manifest file
+       kubectl create -f create-redispod.yml
+
+Step8: Validate the pod creation and find more information
+       kubectl get pods
+       kubectl get pods/redis-pod
+       kubectl describe pods/redis-pod
+
+Method2: Quick Deployment of Docker Image with No Manifest
+Step6:  Create a Pod from Docker Image
+Step7:  Make Sure the POD is created and Ready.
+Step8: Validate the pod creation and find more information
+Validation: check the newly created pod in Kubernetes Dashboard (GUI) – minikube
+https://www.middlewareinventory.com/blog/deploy-docker-image-to-kubernetes/
+
+   
+
+
+
+reference
+https://www.zekelabs.com/blog/how-to-install-kubernetes-cluster-on-aws-ec2-instances/
+https://github.com/bennzhang/kubernetes-install-on-centos7
+
+
+

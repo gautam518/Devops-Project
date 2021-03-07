@@ -1,0 +1,13 @@
+Jenkins installtion centos7
+1-Install java
+2-curl --silent --location http://pkg.jenkins-ci.org/redhat-stable/jenkins.repo | sudo tee /etc/yum.repos.d/jenkins.repo
+3-rpm --import https://jenkins-ci.org/redhat/jenkins-ci.org.key
+4-yum install jenkins
+5-service jenkins start
+6-open in browser
+ip:8080
+7-password store in
+/var/lib/jenkins/secrets/initialAdminPassword
+8-click on install suggested plugins
+9-To check jenkins versions
+cat /var/lib/jenkins/config.xml

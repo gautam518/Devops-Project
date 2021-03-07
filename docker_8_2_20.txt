@@ -1,0 +1,90 @@
+1-docker info
+2-docker version
+docker written in go langaugae
+3-docker --help
+4-docker image ls
+5-docker container ls
+6-docker network ls
+7-docker container run centos cat /etc/centos-release
+8-docker container ls -a
+9-docker container rm container-id
+10-docker container rm con-id1 cont-id2
+11-docker container logs container-id
+12-docker container top container-id
+13-docker container stats
+14-docker container run -d -p 3600:80 --name test1_web nginx
+   docker container run -itd  --name test1_web centos
+15-docker container rename 87d32a886330 gautam_web
+16-docker container restart con-id
+17-docker container wait cont-id
+18-docker container pause cont-id
+19-docker container unpause cont-id
+20-docker container port cont-id
+21-docker container diff cont-id
+  C create
+  D delete
+  A -add
+22-watch 'docker container diff gautam_web'
+23-docker container cp dd gautam_web:/tmp/
+23-docker container export container_id >abc.tar
+24-docker image import abc.tar gautam_web_1
+25-docker container commit  --author "gautam518" -m "this is test commit" 18 my_test_image----> for running container take snapshot
+26-docker login
+27- docker image tag my_test_image gautam518/my_test_image
+28-docker push gautam518/my_test_image
+29-docker image history centos
+30-diffrence between docker image export and docker image save
+   docker container export containerid >abc.tar --it save only single layer
+   docker image save imageid >abc.tar ----->it save all the layer
+31-diffrence between docker image import and docker image load 
+   docker image import abc.tar gautam_web_1
+   docker image load < abc.tar
+32-To mount volume
+    docker create volume new_vol
+    docker run -it --name mnv -v new_vol:/var/www/html d54f8f3aeb10 sh
+
+33-docker bind
+   docker container run -it -v /root/bind/:/tmp/ d54f8f3aeb10 bash
+   getting below error
+  [root@56291e4ea6a8 tmp]# ls
+    ls: cannot open directory .: Permission denied
+How to resolve: run below command
+su -c "setenforce 0"
+
+34-Docker networking
+35 Docker registry
+   docker images ls
+  Note:If docker registry is not showing then go to  /etc/docker-distribution/registry and open the file
+          cat config.yml just check file exist or not 
+   systemctl start docker-distribution
+ 
+-->   docker image tag docker.io/gautam518/lamp-php:lamp7.4 192.168.31.128:5000/gautam518:lamp
+-->   docker image push 192.168.31.128:5000/gautam518
+      we get the below error
+      #The push refers to a repository [192.168.31.128:5000/gautam518]
+      #Get https://192.168.31.128:5000/v1/_ping: http: server gave HTTP response to HTTPS client
+
+below line add for insecure rgistry
+
+ To resolve this go to /etc/docker/daemon.json and add this line
+ {
+"insecure-registries" : ["192.168.31.128:5000"]
+}
+
+then run above command
+{
+"insecure-registries" : ["192.168.31.128:5000"]
+}
+docker image push 192.168.31.128:5000/gautam518
+
+note:
+To push new image in docker rsgistry run below command
+docker image tag docker.io/centos:latest 192.168.31.128:5000/centos5
+docker image rm -f 192.168.31.128:5000/centos5
+docker image push 192.168.31.128:5000/centos5
+          
+
+
+
+Dockerfile
+FROM gautam518/lamp-php:lamp7.4
