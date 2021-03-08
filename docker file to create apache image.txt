@@ -1,0 +1,20 @@
+Docker file to create Apache image
+step1:Run the below script
+vi start.sh
+#!/bin/bash
+rm -rf /run/httpd/* /tmp/httpd*
+#start apache server is foreground
+exec /usr/sbin/apachectl -DFOREGROUND
+
+step2:
+vi DockerFile
+FROM centos:7
+RUN yum -y --setopt=tsflags=nodocs install httpd && yum clean all
+EXPOSE 80
+ADD start.sh /start.sh
+RUN chmod +x /start.sh
+CMD ["/start.sh"]
+
+#docker container run -d --name myweb -p 8080:80 -v /root/new/:/var/www/html/ web:latest
+
+https://blog.sajjan.com.np/2017/02/06/docker-running-apache-web-server-inside-containe
