@@ -18,3 +18,15 @@ CMD ["/start.sh"]
 #docker container run -d --name myweb -p 8080:80 -v /root/new/:/var/www/html/ web:latest
 
 https://blog.sajjan.com.np/2017/02/06/docker-running-apache-web-server-inside-containe
+
+Another docker file
+vi Dockerfile
+FROM centos:7
+#MAINTAINER  Gautam  <gautam518@gmail.com>
+RUN yum -y install httpd
+RUN echo “Hi team” > /var/www/html/index.html
+EXPOSE 80
+CMD /usr/sbin/apachectl -D FOREGROUND
+
+#docker container run -d --name myweb -p 8080:80 -v /home/vol/:/var/www/html/ web:latest
+su -c "setenforce 0" <--To resolve permission denied error
