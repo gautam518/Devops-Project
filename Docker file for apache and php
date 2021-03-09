@@ -1,0 +1,10 @@
+FROM centos:7
+#MAINTAINER  gautam  <gautam518@gmail.com>
+RUN yum -y install httpd
+RUN rpm -Uvh https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm \
+ && rpm -Uvh http://rpms.remirepo.net/enterprise/remi-release-7.rpm
+RUN yum --enablerepo=remi-php73 -y install php php-bcmath php-cli php-common php-gd php-intl php-ldap php-mbstring \
+    php-mysqlnd php-pear php-soap php-xml php-xmlrpc php-zip
+RUN echo “Hi team” > /var/www/html/index.html
+EXPOSE 80
+CMD /usr/sbin/apachectl -D FOREGROUND
