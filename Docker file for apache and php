@@ -8,3 +8,6 @@ RUN yum --enablerepo=remi-php73 -y install php php-bcmath php-cli php-common php
 RUN echo “Hi team” > /var/www/html/index.html
 EXPOSE 80
 CMD /usr/sbin/apachectl -D FOREGROUND
+
+#docker container run -d --name myimages -p  8080:80 -v /home/vol/:/var/www/html web:latest
+su -c "setenforce 0"
