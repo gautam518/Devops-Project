@@ -1,0 +1,154 @@
+Sed commands
+1-To print 1st line
+sed -n 1p filename
+
+2-To print 2 to 4th line
+sed -n '1,4p' filename
+
+3-Viewing the entire file except given range
+sed '20,35d' myfilename
+
+4-Replacing words or characters (basic substitution)
+sed 's/abc/def/g' myfilename
+
+to ignore case sensitive
+sed 's/abc/def/gi' myfilename
+
+5-Replacing words or characters inside a range
+sed '30,40 s/version/story/g' myfilename
+
+6-delete 1st line
+sed '1d' filename
+
+7-delete 1st to 3rd lines
+sed '1,3d' filename
+
+8-delete line other than 1st to 3rd lines
+sed '1,3!d' filename
+
+9-Delete lines that begin with specified character
+sed '/^u/d' filename
+
+10-To delete last lines
+sed '$d' filename
+
+
+ 
+Regular expressions
+To remove empty lines or those beginning with # from the Apache configuration file, do:
+sed '/^#\|^$\| *#/d' httpd.conf
+
+awk
+1-To print 1st column
+awk '{print $1}' filename
+
+2-To print 1st and 3rd column
+awk '{print $1,$3}' filename
+
+3-$NF: It Stands for “number of fields,” and represents the last field.
+To print 1st,2nd and last field
+awk '{print $1,$2,$NF}' filename
+
+4-use ofs for output filled separator
+date | awk 'OFS="-" {print$2,$3,$6}'
+
+
+
+
+
+
+shell script
+1-How to Pass Command Line Arguments in Shell Script
+--$0 The name of command itself--
+
+[root@localhost ~]# cat tt.sh
+#!/bin/bash
+#The script demonstrates the use of variables entered at the command line.
+echo "My name is $0"
+echo "I work for $0"
+[root@localhost ~]# sh tt.sh
+My name is tt.sh
+I work for tt.sh
+
+
+--$n postion of an argument--
+example:name.sh
+#!/bin/bash
+#The script demonstrates the use of variables entered at the command line.
+echo "My name is $1"
+echo "I work for $2"
+
+output
+sh name.sh ram shyam
+My name is ram
+I work for shyam
+
+--$# The number of argument supplied to a script--
+
+#!/bin/bash
+#The script demonstrates the use of variables entered at the command line.
+echo "My name is $#"
+echo "I work for $#"
+
+[root@localhost ~]# sh tt.sh ram shyam
+My name is 2
+I work for 2
+[root@localhost ~]# sh tt.sh ram shyam anand
+My name is 3
+I work for 3
+
+--$* If a script receives two arguments, $* is equivalent to $1 $2. --
+[root@localhost ~]# cat tt.sh
+#!/bin/bash
+#The script demonstrates the use of variables entered at the command line.
+echo "My name is $*"
+echo "I work for $*"
+[root@localhost ~]# sh tt.sh ram shyam
+My name is ram shyam
+I work for ram shyam
+[root@localhost ~]# sh tt.sh ram shyam anand
+My name is ram shyam anand
+I work for ram shyam anand
+[root@localhost ~]#
+
+--$@ All the arguments are individually double quoted. If a script receives two arguments, $@ is-- 
+equivalent to $1 $2. 
+It is equivalent to $*
+
+--$? The exit status of the last command executed.-- 
+[root@localhost ~]# cat tt.sh
+#!/bin/bash
+#The script demonstrates the use of variables entered at the command line.
+echo "My name is $?"
+echo "I work for $?"
+[root@localhost ~]# sh tt.sh
+My name is 0
+I work for 0
+
+--$$ The process number of the current shell. For shell scripts, this is the process ID under which they are executing.--
+#!/bin/bash
+#The script demonstrates the use of variables entered at the command line.
+echo "My name is $$"
+echo "I work for $$"
+[root@localhost ~]# sh tt.sh
+My name is 1688
+I work for 1688
+
+
+Q-what is mtime, ctime, and atime?
+-mtime -2" means files that are less than 2 days old, such as a file that is 0 or 1 days old.
+-mtime +2" means files that are more than 2 days old... {3, 4, 5, ...}
+
+command to delete files older than 7 days
+find ./ -mtime +10 -type f -delete
+also
+find /path/to/files* -mtime +5 -exec rm {} \;
+The third argument, -exec, allows you to pass in a command such as rm. The {} \; at the end is required to end the command.
+
+
+ 
+
+
+
+
+
