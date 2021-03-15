@@ -896,5 +896,101 @@ password=superadminpassword
 
 #kubectl create cm cm3 --from-file=application.properties
 
+To create configmap using Directory
+If there are number of files then you can use configmap using directory
+mkdir newconfig
+vi abc vi def vi efg
+kubectl create cm cm4 --from-file=newconfig/
+
+How to inject config map file in pod
+vi deployment.yaml
+apiVersion: v1
+kind: pod
+metadata:
+    name: firstpod
+     - containers:
+        image: nginx-custom
+        name: firstcontainer
+        imagePullPolicy: Never
+        env:
+          - name: variablefromcm     <-----environment file name inside pods
+            valueFrom:
+                configMapKeyRef:
+                key: variable2       <------ value
+                name: envcm            <--------cm file name
+
+#kubectl apply -f deployment.yaml
+go inside container type env you will get an output name: variablefromcm value variable2
+
+
+
+
+
+
+
+
+
+     
+
+
+
+
+
+Ansible-playbook
+1-What is ansible inventory files
+The Ansible inventory file defines the hosts and groups of hosts upon which commands, modules, and tasks in a playbook operate.
+If necessary, you can also create project-specific inventory files in alternate locations.
+By default location is /etc/ansible/hosts.
+
+1-Write a ansible playbook for cp /etc/hosts in multiple servers.
+vi abc.yml
+---
+  - name: "this is our first day"
+    hosts: webservers1
+    tasks:  
+      - name: "creating dummy file on webservers"
+        command: touch file_on_webservers1
+    
+    name: "copy hosts files in tmp folder"
+    command: cp /etc/hosts /tmp/folders
+
+  - name: "this is our second playbook"
+    hosts: web_database_servers
+    tasks:
+     - name: "creating directory in tmp directory"
+       command: mkdir /tmp/secondplaybook
+
+     - name: "create a dummy file in database and webserver"
+     - command: touch /tmp/mysecondplay.txt
+
+ansible-playbook abc.yml -i final.inventory.txt 
+here inventory files includes
+vi final.inventory.txt
+webserver ansible_host=192.168.25.15 ansible_ssh_pass=password ansible_connection=ssh ansible_port=22 ansible_user=root
+sqlserver ansible_host=192.168.25.16 ansible_ssh_pass=password ansible_connection=ssh ansible_port=22 ansible_user=root
+
+To ping only sq1-server group in
+ansible sqlserver -m ping final.inventory.txt
+     
+
+
+
+
+1-Day to day activities of devops engineer.
+checking emails.
+checking alerts. like application alert,server alert like disc utilizations,cpu usage warning etc etc
+cheking ticketing tool for scheduled tasks.
+Ensure if any new server is created and monitoring has been setup on that.
+Verify if all the service running on that are covered under monitoring system.
+check and automate if any server is running out of disk.
+Taking back of instance and restoring if required.
+Taking backup of prod db and providing that db to developers on staging/Testing environment for testing any issue.
+Automation setup of daily tasks like (DB/Instance/Logs/Config-Files)backup.
+In case of new project settingup new jenkins job(free style/Pipelline)
+Making config changes on servers using ansible
+Writing playbook for automating daily tasks.
+Deploy code on developement and prod servers.
+Seeking for approvals from (business/QA/UAT and security sign-offs).
+
 
 
