@@ -1,0 +1,7 @@
+Ansible playbook
+1-To check all modules
+ansible-doc -l
+
+2-To check the modules
+ansible-doc yum
+
