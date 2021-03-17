@@ -5,3 +5,161 @@ ansible-doc -l
 2-To check the modules
 ansible-doc yum
 
+ansible playbook to install apache
+---
+- name: This sets up an httpd webserver
+  hosts: ansibleclient01.local
+  tasks:
+  - name: Install apache packages 
+    yum:
+      name: httpd
+      state: present              ---latest(To install latest version)
+  - name: ensure httpd is running
+    service:
+      name: httpd 
+      state: started
+  - name: Open port 80 for http access
+    firewalld:
+      service: http
+      permanent: true
+      state: enabled
+  - name: Restart the firewalld service to load in the firewall changes
+    service: 
+      name: firewalld 
+      state: restarted
+
+#To install the latest packages
+- name: Install apache packages 
+    yum:
+      name: httpd
+      state: latest
+#ensure list of packages installed
+ yum:
+   name: "{{ packages }}"
+ vars:
+   packages:
+     - httpd
+     - httpd-tools
+
+#Remove the apache packages
+ - name: remove the Apache package
+   yum:
+     name: httpd
+     state: absent
+
+#upgrade all packages
+- name: upgrade all packages
+  yum:
+    name: '*'
+    state: latest
+
+#upgrade all packages,excluding kernel and foo realated packages
+- name: upgrade all packages
+  yum:
+    name: '*'
+    state: latest
+    exclude: kernel*,foo*
+
+#install the nginx rpm from remote repo
+- name: install the nginx rpm from remote repo
+  yum:
+    name: http://nginx.org/packages/centos/6/noarch/RPMS/nginx-release-centos-6-0.el6.ngx.noarch.rpm
+     state: present
+- name: install the nginx rpm from local file
+  yum:
+    name: /usr/local/src/nginx-release-centos-6-0.el6.ngx.noarch.rpm
+     state: present
+ 
+- name: install the list of packages with multiple repos enabled
+  yum: 
+    name: sos
+    disablerepo: "epel,ol7_latest"
+
+- name: Install the list of packages
+  yum:
+    name:
+      - nginx
+      - postgresql
+      - postgresql-server
+    state: present
+
+#Download the nginx package but do not install it
+- name: Download the nginx package but do not install it
+  yum:
+    name:
+      - nginx
+    state: latest
+    download_only: true
+
+
+Copying files from a local machine to the remote server
+- hosts: blocks
+  tasks:
+  - name: Ansible copy file to remote server
+    copy:
+      src: ~/sample.txt
+      dest: /tmp 
+
+copy the file if the file does not exist on the remote server.
+- hosts: blocks
+  tasks:
+  - name: Ansible copy file force
+    copy:
+      src: ~/sample.txt
+      dest: /tmp 
+      force: no
+
+Copying a directory from a local machine to the remote server
+- hosts: blocks
+  tasks:
+  - name: Ansible copy directory to the remote server
+    copy:
+      src:/Users/mdtutorials2/Documents/Ansible/copy_dir_ex
+      dest:/Users/mdtutorials2/Documents/Ansible/tmp
+
+Copying files between different folders on the same remote machine
+- hosts: blocks
+  tasks:
+  - name: Ansible copy files remote to remote
+    copy:
+      src: /tmp/hello6
+      dest: /etc
+      remote_src: yes
+
+Copying multiple files/directories using with_items
+- hosts: blocks
+  tasks:
+  - name: Ansible copy multiple files with_items
+    copy:
+      src: ~/{{item}}
+      dest: /tmp
+      mode: 0774
+    with_items:
+      ['hello1','hello2','hello3','sub_folder/hello4']
+
+copy a file with owner and permissions
+- name: Copy file with owner and permissions
+  copy:
+    src: /srv/myfiles/foo.conf
+    dest: /etc/foo.conf
+    owner: foo
+    group: foo
+    mode: '0644'
+
+copy a file with owner and permission using symbolic representation
+- name: Copy file with owner and permission, using symbolic representation
+  copy:
+    src: /srv/myfiles/foo.conf
+    dest: /etc/foo.conf
+    owner: foo
+    group: foo
+    mode: u=rw,g=r,o=r
+
+- name: Copy a new "ntp.conf file into place, backing up the original if it differs from the copied version
+  copy:
+    src: /mine/ntp.conf
+    dest: /etc/ntp.conf
+    owner: root
+    group: root
+    mode: '0644'
+    backup: yes
