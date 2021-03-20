@@ -1,0 +1,54 @@
+Masternode: 192.168.101.130
+Worker-node1: 192.168.101.131
+
+On both nodes
+1-Install docker 
+yum install -y yum-utils device-mapper-persistent-data lvm2
+
+2-yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+
+3-yum install docker
+
+4-systemctl start docker
+
+5-systemctl enable docker
+
+6-configure kubernetes repository
+cat <<EOF > /etc/yum.repos.d/kubernetes.repo
+[kubernetes]
+name=Kubernetes
+baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
+enabled=1
+gpgcheck=1
+repo_gpgcheck=1
+gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+EOF
+
+7- sudo yum install -y kubelet kubeadm kubectl
+
+8-systemctl enable kubelet
+
+9-systemctl start kubelet
+
+10-
+cat <<EOF > /etc/sysctl.d/k8s.conf
+net.bridge.bridge-nf-call-ip6tables = 1
+net.bridge.bridge-nf-call-iptables = 1
+EOF
+sysctl --system
+
+11-setenforce 0
+sed -i ‘s/^SELINUX=enforcing$/SELINUX=permissive/’ /etc/selinux/config
+
+13-sed -i '/swap/d' /etc/fstab
+swapoff -a
+
+Only on master node
+14-kubeadm init --ignore-preflight-errors=all
+
+mkdir -p $HOME/.kube
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+only on worker node
+kubeadm join 192.168.230.131:6443 --token as0fsv.wah6ailft9887erq --discovery-token-ca-cert-hash sha256:0aba0a87c9484ed3e58f21ff56965e719e36ddc41d80a3cf7219b5389f6a11af
