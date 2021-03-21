@@ -1,0 +1,22 @@
+1-yum upgrade -y
+2-yum install -y python3
+3-adduser cowrie 
+4-yum install -y python-virtualenv git gcc
+5-firewall-cmd --add-port 2222/tcp
+6-su cowrie
+7-cd /home/cowrie
+8-git clone http://github.com/cowrie/cowrie
+9-cd /home/cowrie/cowrie
+10-virtualenv --python=python3.6 cowrie-env
+11-. cowrie-env/bin/activate
+12-pip3 install --upgrade pip
+13-pip3 install --upgrade -r requirements.txt
+14-deactivate
+15-bin/cowrie start
+16-exit
+17-ss -lntp | grep twistd
+
+test the honeypot
+ssh -p 2222 root@192.168.230.130
+
+logs stored in /home/cowrie/cowrie/var/log/cowrie/
