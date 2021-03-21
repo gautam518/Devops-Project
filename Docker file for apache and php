@@ -11,3 +11,12 @@ CMD /usr/sbin/apachectl -D FOREGROUND
 
 #docker container run -d --name myimages -p  8080:80 -v /home/vol/:/var/www/html web:latest
 su -c "setenforce 0"
+
+Steps to push docker image in docker hub
+1-docker build -t web .
+2-docker login
+2-docker image ls
+3-docker tag web gautam518/web_php_apache:v1
+4-docker push gautam518/web_php_apache
+5-To pull image
+docker pull gautam518/web_php_apache:v1
