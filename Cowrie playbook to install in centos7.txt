@@ -16,3 +16,6 @@ RUN pip3 install --upgrade pip
 RUN pip3 install --upgrade -r requirements.txt
 RUN deactivate
 RUN bin/cowrie/start
+
+
+docker run -d -p 2222:2222/tcp -v /home/cowrie/var/log/cowrie/cowrie.json:/cowrie/cowrie-git/var/log/cowrie/cowrie.json cowrie/cowrie
