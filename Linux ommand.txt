@@ -152,6 +152,46 @@ also
 find /path/to/files* -mtime +5 -exec rm {} \;
 The third argument, -exec, allows you to pass in a command such as rm. The {} \; at the end is required to end the command.
 
+More complex awk commands
+To print the word which includes only alphabet 
+cat file
+abc1234 ram
+def3567 shyam
+xyz2356 rahul
+def
+
+#awk '$1 ~ /^[a-zA-Z]+$/' file
+output 
+def
+
+To print only leter from first column
+#cat file | tr -d  '/0-9/'
+
+output
+abc ram
+def shyam
+xyz rahul
+def
+
+It print only numbers
+#cat x.x | tr -d  '/a-z,A-Z/'
+
+1234
+3567
+2356
+
+#To print only alphabets from alphnumeric from first columns
+awk {'print $1'} file | tr -d  '/0-9/'
+abc
+def
+xyz
+def
+
+awk {'print $1'} file | tr -d '[:alpha:]'
+1234
+3567
+2356
+
 
  
 
