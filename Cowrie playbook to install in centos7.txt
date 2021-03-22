@@ -1,0 +1,18 @@
+Vi Dockerfile
+
+FROM centos:7
+#MAINTAINER  gautam  <gautam518@gmail.com>
+RUN yum -y install python3
+RUN yum -y install git
+RUN adduser cowrie
+RUN yum install -y python-virtualenv git gcc
+USER cowrie
+WORKDIR /home/cowrie
+RUN git clone http://github.com/cowrie/cowrie
+WORKDIR /home/cowrie/cowrie
+RUN virtualenv --python=python3.6 cowrie-env
+RUN . cowrie-env/bin/activate
+RUN pip3 install --upgrade pip
+RUN pip3 install --upgrade -r requirements.txt
+RUN deactivate
+RUN bin/cowrie/start
