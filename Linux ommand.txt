@@ -32,6 +32,9 @@ sed '/^u/d' filename
 10-To delete last lines
 sed '$d' filename
 
+11-awk command to print 2nd column output that common in all files 
+awk 'FNR == NR {a[$2]; next} $2 in a {print $2}' sheet1 sheet2 sheet3 > out.txt
+
 
  
 Regular expressions
