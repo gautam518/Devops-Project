@@ -17,14 +17,14 @@ Chapter 7 - Loops in Python: ​
 Chapter 7 - Practice Set: 
 Chapter 8 - Functions & Recursion: ​
 Chapter 8 - Practice Set: 06:36:28​
-Project 1 - Snake, Water, Gun Game: 06:52:30​
-Chapter 9 - File I/O: 07:06:55​
-Chapter 9 - Practice Set: 07:28:11​
-Chapter 10 - Object Oriented Programming: 08:08:38​
-Chapter 10 - Practice Set: 09:17:22​
-Chapter 11 - Inheritance: 09:48:30​
-Chapter 11 - Practice Set: 10:55:24​
-Project 2 - The Perfect Guess  11:37:01
+Project 1 - Snake, Water, Gun Game: 
+Chapter 9 - File I/O:
+Chapter 9 - Practice Set: 
+Chapter 10 - Object Oriented Programming:
+Chapter 10 - Practice Set: 
+Chapter 11 - Inheritance: 
+Chapter 11 - Practice Set: 
+Project 2 - The Perfect Guess  
 
 1-Chapter1 Modules,comments and pip
 A module is a file containing code within by somebody else (usually) which can be imported and used by our programs.
