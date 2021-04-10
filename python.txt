@@ -1,0 +1,189 @@
+Python
+Course Logistics: 
+Chapter 0 - Introduction: 
+Chapter 1 - Modules, Comments & Pip:
+Chapter 1 - Practice Set: 
+Chapter 2 - Variables & Data Types: ​
+Chapter 2 - Practice Set: 
+Chapter 3 - Strings: ​
+Chapter 3 - Practice Set: ​
+Chapter 4 - Lists & Tuples: ​
+Chapter 4 - Practice Set: 
+Chapter 5 - Dictionary & Sets: ​
+Chapter 5 - Practice Set:​
+Chapter 6 - Conditional Expressions: ​
+Chapter 6 - Practice Set: 
+Chapter 7 - Loops in Python: ​
+Chapter 7 - Practice Set: 
+Chapter 8 - Functions & Recursion: ​
+Chapter 8 - Practice Set: 06:36:28​
+Project 1 - Snake, Water, Gun Game: 06:52:30​
+Chapter 9 - File I/O: 07:06:55​
+Chapter 9 - Practice Set: 07:28:11​
+Chapter 10 - Object Oriented Programming: 08:08:38​
+Chapter 10 - Practice Set: 09:17:22​
+Chapter 11 - Inheritance: 09:48:30​
+Chapter 11 - Practice Set: 10:55:24​
+Project 2 - The Perfect Guess  11:37:01
+
+1-Chapter1 Modules,comments and pip
+A module is a file containing code within by somebody else (usually) which can be imported and used by our programs.
+pip is the package manager for python.You can use pip to install a module on your system.
+
+There are 2 types of modules.
+1-Buitin modules -Pre installed in python. eg os
+2-External modules- Need to install using pip. eg flask,tensorflow
+
+Practice set
+1-Write a program to execute twinkle twinkle little star poem in python.
+
+print ('''Twinkle, twinkle, little star
+How I wonder what you are
+Up above the world so high
+Like a diamond in the sky
+Twinkle, twinkle little star
+How I wonder what you are''')
+
+Note:If you want to print more than 1 line then instead of write " you have to write '''. 
+
+2-Write a python program to print the contents of a directory using os module.Search online for the function which does that.
+
+import os
+print(os.listdir())
+
+Chapter 2 – Variables and Data Types
+
+A variable is a name given to a memory location in a program. For example
+a=30
+b=”Harry”
+c=71.22
+Variable – Container to store a value
+Keywords – Reserved words in Python
+Identifiers – class/function/variable name
+
+
+Data Types:
+Primarily there are the following data types in Python:
+Integers   Interger always comes in double quotes
+Floating point numbers
+Strings
+Booleans
+None
+Python is a fantastic language that automatically identifies the type of data for us.
+a = 71                                    #Identifies a as class<int>
+b = 88.44                              #Identifies b as class<float>
+name = “Harry”                  #Identifies name as class<Str>
+
+#vi python3.py
+a = 'harry'
+b = 34
+c = 35.4
+
+print(a)
+print(b)
+print(c)
+print(type(a))          --To check type of a 
+
+output
+harry
+34
+35.4
+<class 'str'>
+
+Rules for defining a variable name: (Also applicable to other identifiers)
+
+A variable name can contain alphabets, digits, and underscore.
+A variable name can only start with an alphabet and underscore.
+A variable can’t start with a digit.
+No white space is allowed to be used inside a variable name.
+Examples of few valid variable names,
+
+Harry, harry, one8, _akki, aakash, harry_bro, etc.
+
+#Operators in Python
+The following are some common operators in Python:
+
+Arithmetic Operators (+, -, *, /, etc.)
+Assignment Operators (=, +=, -=, etc.)
+Comparison Operators (==, >=, <=, >, <, !=, etc.)
+Logical Operators (and, or, not)
+
+Arithmetic Operators
+cat 4.py
+a= 5
+b = 6
+print("a + b = " ,3 * 4)
+
+Assignment Operators
+cat 5.py
+a = 34
+a += 30
+print (a)
+
+Comparison Operators
+cat 6.py
+b = (14>=7)
+print(b)
+
+Logical operator
+
+#convert string into int
+a = "5"
+a = int(a)
+b = 6
+print(a + b)
+
+output = 11
+
+There are many functions to convert one data type into another.
+Str(31)         ”31” Integer to string conversion
+int(“32”)       32 String to int conversion
+float(32)       32.0 Integer to float conversion
+
+Input function
+To type value
+input function
+Write a program to ask to enter your name
+
+a = input("enter your name")
+print("my name is",a)
+o/p= my name is gautam
+
+Write a program to sum the 2 numbers.
+a = input("enter the number")
+a = int(a)   <--convert a to integer
+b = 5
+print("a +b", a + b)
+
+o/p = 
+11
+
+Practice set.
+1-Write a python program to add 2 numbers.
+a = 5
+b = 6
+print(a + b)
+
+2-Write a python program to find reminder when divided by 2
+a = 6
+b = 3
+print("the reminder when a is divided by b is", a%b)
+
+o/p=
+the reminder when a is divided by b is 0
+
+3-
+
+
+
+
+
+
+
+
+
+
+
+
+
+
