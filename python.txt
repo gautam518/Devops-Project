@@ -172,7 +172,76 @@ print("the reminder when a is divided by b is", a%b)
 o/p=
 the reminder when a is divided by b is 0
 
-3-
+3-Use comparison operator to find whether a is greater than b or not.
+take a = 34 b =80
+
+a = 34
+b = 80
+print(a>b)
+
+o/p - false
+
+4-Write a python program to find average of two numbers enterd by the user
+a = int(input("enter the first number"))
+b = int(input("enter the 2nd number"))
+c = (a+b)/2
+print("average of 2 numbers is",c)
+
+o/p =
+enter the first number5
+enter the 2nd number7
+average of 2 numbers is 6.0
+
+5- Write a python program to entered square of numbers.
+
+a =int(input("enter the number"))
+b = a*a
+print("the square of number is", b)
+
+o/p
+enter the number 5
+the square of number is 25
+
+chapter3: String
+string always written in ('''abc ''') or double quotes("abc")
+
+slicing:->It is a part of strings.The index of the string starts from 0 to -1
+H A R R Y
+0 1 2 3 4
+-5-4-3-2-1
+
+example1:
+a = "harry"
+print(a[0])
+
+output=h
+example2:
+a = "harry"
+print(a[0:3])
+
+output will be from 0 to 2
+har
+Note:You can find the lengh of string using len function
+example
+a = "harry"
+print(len(a))
+
+output = 5
+
+name = "harry"
+#print(name[:3])  ----->It is same as print(name[0:3])
+#print(name[1:])------->It is same as print(name[1:5])
+#print(name[-4:-1] ----->It is same as print(name[1:4])
+
+slicing with skip value
+We can provide a skip value as a part of our slice like this
+word = "amazing"
+        0123456
+
+word[1:6:2] = mzn  <-------------It skips the every 2nd value
+word[0::2]  = aaig <-------------It skips the every 2nd value
+
+
 
 
 
