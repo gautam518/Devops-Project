@@ -50,4 +50,4 @@ sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 sudo chown $(id -u):$(id -g) $HOME/.kube/config
 
 only on worker node
-kubeadm join 192.168.230.131:6443 --token as0fsv.wah6ailft9887erq --discovery-token-ca-cert-hash sha256:0aba0a87c9484ed3e58f21ff56965e719e36ddc41d80a3cf7219b5389f6a11af
+kubeadm join 192.168.168.129:6443 --token kxjvwn.oq7hpzl9jv8wflsr --discovery-token-ca-cert-hash sha256:ef4bde6e8f310c846262812daaba3e40ae15f20cdb3e874f117760180b789139
