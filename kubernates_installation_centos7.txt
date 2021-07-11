@@ -5,9 +5,8 @@ On both nodes
 1-Install docker 
 yum install -y yum-utils device-mapper-persistent-data lvm2
 
-2-yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+2-curl -fsSL https://get.docker.com/ | sh
 
-3-yum install docker
 
 4-systemctl start docker
 
