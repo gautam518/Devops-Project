@@ -1,0 +1,97 @@
+How to install apache tomcat8 in centos7
+1-check the java version
+java -version
+
+javac -version
+
+if not then install java 1.8
+yum install java-1.8.0-openjdk.x86_64
+
+2-wget wget https://downloads.apache.org/tomcat/tomcat-8/v8.5.69/bin/apache-tomcat-8.5.69.zip
+
+3-unzip apache-tomcat-8.5.69.zip
+
+4-mkdir /opt/tomcat 
+
+5- mv apache-tomcat-8.5.69 /opt/tomcat/
+
+6-cd /opt/tomcat/apache-tomcat-8.5.69
+
+7- chmod 700 bin/*.sh
+
+8- ln -s /opt/tomcat/apache-tomcat-8.5.69/bin/startup.sh /usr/bin/tomcatup(optional)
+   ln -s /opt/tomcat/apache-tomcat-8.5.69/bin/shutdown.sh /usr/bin/tomcatdown(optional)   
+
+9- go to browser and check
+   http://ip:8080
+
+10- To change port number
+     vi /opt/tomcat/apache-tomcat-8.5.51/conf/server.xml
+      <Connector port="8090" protocol="HTTP/1.1"
+
+change here port 8080 to 8090
+ 
+
+11-For admin access go to 
+/opt/tomcat/apache-tomcat-8.5.69/conf/
+
+  
+<!--
+  <role rolename="tomcat"/>
+  <role rolename="role1"/>
+  <user username="tomcat" password="<must-be-changed>" roles="tomcat"/>
+  <user username="both" password="<must-be-changed>" roles="tomcat,role1"/>
+  <user username="role1" password="<must-be-changed>" roles="role1"/>
+
+-->
+   <role rolename="admin-gui"/>
+   <role rolename="manager-gui"/>
+   <user username="gautam" password="admin" roles="admin-gui,manager-gui"/>
+
+</tomcat-users>
+
+By default Tomcat web management interface is configured to allow access only from the localhost, if you want to be able to access 
+the web interface from a remote IP or from anywhere which is not recommended because it is a security risk you can open the 
+following files and make the following changes.
+If you need to access the web interface from anywhere open the following files and comment or remove the lines :
+vi /opt/tomcat/apache-tomcat-8.5.69/webapps/manager/META-INF
+-->
+<Context antiResourceLocking="false" privileged="true" >
+  <CookieProcessor className="org.apache.tomcat.util.http.Rfc6265CookieProcessor"
+                   sameSiteCookies="strict" />
+<!--  <Valve className="org.apache.catalina.valves.RemoteAddrValve"
+         allow="127\.\d+\.\d+\.\d+|::1|0:0:0:0:0:0:0:1" />
+  <Manager sessionAttributeValueClassNameFilter="java\.lang\.(?:Boolean|Integer|Long|Number|String)|org\.apache\.catalina\.filters\.CsrfPreventionFilter\$LruCache(?:\$1)?|java\.util\.(?:Linked)?HashMap"/>
+-->
+</Context>
+
+vi /opt/tomcat/apache-tomcat-8.5.69/webapps/host-manager/META-INF
+-->
+<Context antiResourceLocking="false" privileged="true" >
+  <CookieProcessor className="org.apache.tomcat.util.http.Rfc6265CookieProcessor"
+                   sameSiteCookies="strict" />
+<!--  <Valve className="org.apache.catalina.valves.RemoteAddrValve"
+         allow="127\.\d+\.\d+\.\d+|::1|0:0:0:0:0:0:0:1" />
+  <Manager sessionAttributeValueClassNameFilter="java\.lang\.(?:Boolean|Integer|Long|Number|String)|org\.apache\.catalina\.filters\.CsrfPreventionFilter\$LruCache(?:\$1)?|java\.util\.(?:Linked)?HashMap"/>
+-->
+</Context>
+
+
+Go to boweser and check
+You can deploy war file using broswer
+download war file in windows using sample
+https://github.com/efsavage/hello-world-war/raw/master/dist/hello-world.war
+Go to http://192.168.168.128:8090/manager/html option , choose the path select war to upload
+Now again check using broswer
+http://192.168.168.128:8090/hello-world/
+
+
+
+Upgrade tomcat 8 to 9
+
+1-stop the current tomcat service
+2-install the new tomcat
+3- copy old tomcat /conf/Catalina/localhost/arsys.xml file from old to new one
+4-configure ports and java options
+5-update the deployer settings
+     
