@@ -1,0 +1,34 @@
+How to create user in aws linux machine and connect using putty
+Step1-Login using ec2-user
+      sudo su - 
+      useradd test
+      su - test
+      mkdir .ssh
+      chmod 777 .ssh
+      cd .ssh/
+      touch authorized_keys
+      chmod 600 authorized_keys
+
+Step2: Go to aws console serach key-pair
+       create key-pair in .pem format
+       example test.pem
+
+Step3-Open the test.pem and copy it in server
+Step4-Login in server using ec2-user 
+      sudo ssh-keygen -y
+      Enter file in which the key is (/root/.ssh/id_rsa): /home/ec2-user/test.pem
+      ssh-rsa AAAAB3NzaC1yc2EAAAAygfP5FJhr+mgr6B552NMrjlXJlwvLIdMvuGPKJYsy4pZQ7fS/NwPi9jpgOZzbuv+Ppkpss1BDltkpHuOxe1F
+
+Step5-Copy ssh-rsa AAAAB3NzaC1yc2EAAAAygfP5FJhr+mgr6B552NMrjlXJlwvLIdMvuGPKJYsy4pZQ7fS/NwPi9jpgOZzbuv+Ppkpss1BDltkpHuOxe1F in test/.ssh/authorized_keys
+
+Step5-Go to puttygen
+      load test.pem
+      save private key
+      output test.ppk
+
+Step6-Go to putty
+      Enter ip address
+      add test.ppk
+      enter username
+
+      
