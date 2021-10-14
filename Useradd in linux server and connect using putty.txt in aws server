@@ -19,7 +19,11 @@ Step4-Login in server using ec2-user
       Enter file in which the key is (/root/.ssh/id_rsa): /home/ec2-user/test.pem
       ssh-rsa AAAAB3NzaC1yc2EAAAAygfP5FJhr+mgr6B552NMrjlXJlwvLIdMvuGPKJYsy4pZQ7fS/NwPi9jpgOZzbuv+Ppkpss1BDltkpHuOxe1F
 
-Step5-Copy ssh-rsa AAAAB3NzaC1yc2EAAAAygfP5FJhr+mgr6B552NMrjlXJlwvLIdMvuGPKJYsy4pZQ7fS/NwPi9jpgOZzbuv+Ppkpss1BDltkpHuOxe1F in test/.ssh/authorized_keys
+Step5-su - test
+Copy it
+cp ssh-rsa AAAAB3NzaC1yc2EAAAAygfP5FJhr+mgr6B552NMrjlXJlwvLIdMvuGPKJYsy4pZQ7fS/NwPi9jpgOZzbuv+Ppkpss1BDltkpHuOxe1F in test/.ssh/authorized_keys
+
+step6-chmod 600 .ssh/authorized_keys
 
 Step5-Go to puttygen
       load test.pem
