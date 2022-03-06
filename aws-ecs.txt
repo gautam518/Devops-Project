@@ -1,0 +1,40 @@
+How to create ecr and push images to ecr and connect it using ecr 
+1-aws login
+2-create ecr with name apache
+3-vi dockerfile
+FROM ubuntu:18.04
+
+# Install dependencies
+RUN apt-get update && \
+ apt-get -y install apache2
+
+# Install apache and write hello world message
+RUN echo 'Hello World!' > /var/www/html/index.html
+
+# Configure apache
+RUN echo '. /etc/apache2/envvars' > /root/run_apache.sh && \
+ echo 'mkdir -p /var/run/apache2' >> /root/run_apache.sh && \
+ echo 'mkdir -p /var/lock/apache2' >> /root/run_apache.sh && \ 
+ echo '/usr/sbin/apache2 -D FOREGROUND' >> /root/run_apache.sh && \ 
+ chmod 755 /root/run_apache.sh
+
+EXPOSE 80
+
+CMD /root/run_apache.sh
+
+4-docker build -t hello-world .
+5-Run docker images to verify that the image was created correctly.
+docker images --filter reference=hello-world
+6-docker tag hello-world:latest 176128016691.dkr.ecr.us-east-1.amazonaws.com/apache:latest
+7-docker push 176128016691.dkr.ecr.us-east-1.amazonaws.com/apache:latest
+
+8-Now For ecs
+go to iam roles 
+create role with name ECSTaskExecutionRole
+select policy AmazonECSTaskExecutionRolePolicy
+
+9-create cluster with name hello-world
+check on vpc and create
+now go to tasks define tasks and in container option put ecr uri path
+now create service 
+
